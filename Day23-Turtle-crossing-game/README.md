@@ -1,4 +1,5 @@
 # Turtle crossing game project
+![day23-turtle-crossing](https://user-images.githubusercontent.com/120784842/225292561-ea3d7f34-2687-4db2-a7e3-c1159a467bd1.gif)
 
 ## 게임 방법
 1. 거북이는 키보드 ↑ 키를 누르면 앞으로 움직입니다. 뒤로 가거나, 왼쪽, 오른쪽으로 움직이지 않고, 앞으로만 움직입니다.
