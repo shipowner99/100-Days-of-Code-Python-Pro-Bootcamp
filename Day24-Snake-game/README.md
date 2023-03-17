@@ -56,6 +56,8 @@ https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/4befbb2
 >  ```
 
 ## 파일 열고 수정하는 방법 -open, with 키워드 사용 방법
+이 프로젝트에서는 1) 처음 실행했을 때 data에 저장되어 있던 최고 점수를 불러낼 때, 2) 신기록 세우면 data에 점수를 덮어 씌우기할 때 사용함.
+
 1)read
 - https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/4befbb27fd538267cec37e93ec91c43aeaf1c292/Day24-Snake-game/scoreboard.py#L11-L12
 
@@ -67,7 +69,7 @@ https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/4befbb2
 
 3)with키워드
 - with 를 쓰면 data.close()를 하지 않아도 사용하고나서 자동으로 닫힘. 파일 닫는 것을 기억할 필요가 없음. 일을 끝냈다는 것을 알아채는 즉시 파일을 닫는다.
-- 이 프로젝트에서는 처음 실행했을 때 data에 저장되어 있던 최고 점수를 불러내고 신기록 세우면 data에 점수를 덮어 씌우기할 때 사용함.
+
 
 ## 발전시키고 싶은 점
 - 게임이 끝나고 자동으로 다시 시작하는 것이 아니라 키보드 아무 키나 눌렀을 때 다시 시작하게 하고 싶다.
