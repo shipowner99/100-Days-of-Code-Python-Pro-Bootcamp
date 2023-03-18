@@ -39,7 +39,7 @@ https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/3386cbc
 
 ### Function as Inputs
 https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/3386cbcdebbc395a17f0c3d33f6efb3313545850/Day23-Turtle-crossing-game/main.py#L20
-변수 자리에 함수를 넣을수도 있음
+변수 자리에 함수를 인자로 넣을수도 있음. 이때 괄호는 쓰지 않는다.
     
 ### Higher Order Functions
 다른 함수와 같이 작동하는 함수(여기선 onkey)
