@@ -38,14 +38,14 @@ https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/94e7ee2
 2. 원인
 
 
-공이 패들과의 충돌을 알아내는 코드에서 공의 x좌표가  패들의 시작점을 넘어갔는지와 공과 패들과의 거리를 이용해서 충돌을 감지했는데 이렇게하면 공이 패들뒤로 넘어갔음에도 조건을 충족하여 계속해서 튕겨져 나갔다.
+공이 패들과의 충돌을 알아내는 코드에서 1)공의 x좌표가 패들의 시작점을 넘어갔는가 2)공과 패들과의 거리가 50 이하인가 이 두 조건을 이용해서 충돌을 감지했는데 이렇게하면 공이 패들뒤로 넘어갔음에도 거리가 짧은 경우 반복해서 튕겨져 나갔다.
 https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/94e7ee2ca6f8814bfc80a925cb135ec9257a2d1a/Day22-Pong-game/main.py#L36-L38
 
 3. 해결방안
 
 
-공과 패들과의 거리가 아니라 공의 x좌표와 패들의 x,y 좌표를 사용하여 정확히 충돌했을 때를 찾아냄.
-패들의 위와 아래에 충돌했을 때도 튕겨져 나가도록 추가함.
+1) 공과 패들과의 거리가 아닌 공의 x좌표값과 패들의 y 좌표값을 사용하여 정확히 충돌했을 때를 찾아냄.
+2) 패들의 양 옆에 충돌했을 때 뿐만 아니라 패들의 위와 아래에 충돌했을 때도 튕겨져 나가도록 추가함.
 https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/94e7ee2ca6f8814bfc80a925cb135ec9257a2d1a/Day22-Pong-game/main.py#L39-L43
 
 4. 결과
