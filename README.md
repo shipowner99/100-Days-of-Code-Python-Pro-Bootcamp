@@ -2,7 +2,7 @@
  100-Days-of-Code: The Complete Pyhon Pro Bootcamp - Dr.Angela Yu
 
 ## day22 pong-game
-README
+[README](https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/main/Day22-Pong-game/README.md)
 
 ![day22-pong-game](https://user-images.githubusercontent.com/120784842/226108264-865397be-607b-4a30-84c5-a2cbc51249aa.gif)
 
