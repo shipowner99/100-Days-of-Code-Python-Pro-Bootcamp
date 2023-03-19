@@ -9,15 +9,15 @@
 
 ## 배운 점
 
-## Working with CSV files
-### CSV 
+### Working with CSV files
+#### CSV 
 표 형태로 된 데이터를 대표하는 일반적인 방식(comma seperated Values)
 
-## Analysing Data with Pandas
+### Analysing Data with Pandas
 https://pandas.pydata.org/docs/index.html
 
-### 판다스의 주요 데이터 구조 2가지
-#### data frame
+#### 판다스의 주요 데이터 구조 2가지
+##### data frame
 - 전체 표와 같은 것
 - csv 파일을 pandas로 불러오는 방법
 https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/a496c40a5eaa9184020145141941cc22bd193ff7/Day25-US-states-game/main.py#L10
@@ -26,7 +26,7 @@ https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/a496c40
 ```
 to_dict() : 각 열에 독립된 딕셔너리를 만들어줌.
 ```
-#### series
+##### series
 일종의 리스트로 표에서 한 열column(세로)을 말함.
 
 관련 매소드
@@ -34,14 +34,14 @@ to_dict() : 각 열에 독립된 딕셔너리를 만들어줌.
 to_list() : 리스트로 만들어줌.
 https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/a496c40a5eaa9184020145141941cc22bd193ff7/Day25-US-states-game/main.py#L11
 
-### Get Data in columns
+#### Get Data in columns
 >```
 >data["condition"]
 또는
 >```
 >data.condition
 
-### Get data in row
+#### Get data in row
 >```
 >data[data.day == "Monday"]
 >data[data.temp == data.temp.max()]
