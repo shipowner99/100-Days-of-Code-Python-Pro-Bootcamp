@@ -16,4 +16,10 @@
 
 ![day24-snake-game](https://user-images.githubusercontent.com/120784842/225852600-ba06056f-efb3-4332-8c6d-b7df38bd79a4.gif)
 
+## day 25 us-states-game
+[README](https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/main/Day25-US-states-game/README.md)
+
+![day25-us-state-game](https://user-images.githubusercontent.com/120784842/226177015-b2995ab0-4fa9-469a-b635-fedf12565150.gif)
+
+
 
