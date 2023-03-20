@@ -31,8 +31,9 @@ to_dict() : 각 열에 독립된 딕셔너리를 만들어줌.
 일종의 리스트로 표에서 한 열column(세로)을 말함.
 
 관련 매소드
-
+```
 to_list() : 리스트로 만들어줌.
+```
 https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/blob/a496c40a5eaa9184020145141941cc22bd193ff7/Day25-US-states-game/main.py#L11
 
 #### Get Data in columns
