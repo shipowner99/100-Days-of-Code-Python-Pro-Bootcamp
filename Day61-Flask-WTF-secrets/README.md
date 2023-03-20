@@ -61,7 +61,6 @@ https://flask-wtf.readthedocs.io/en/1.0.x/form/
     {{ form.email.label }} {{ form.email(size=30) }}
     {{ form.password.label }} {{ form.password(size=30) }}
     <input type="submit"  value="Log In">
-
   ```
 
 
