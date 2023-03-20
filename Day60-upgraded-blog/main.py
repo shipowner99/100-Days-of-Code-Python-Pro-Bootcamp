@@ -25,8 +25,8 @@ def contact():
     if request.method == "POST":
         data = request.form
         send_email(data["username"], data["email"], data["phone"], data["message"])
-        return render_template("contact.html")
-    return render_template("contact.html")
+        return render_template("contact.html", msg_sent=True)
+    return render_template("contact.html", msg_sent=False)
 
 @app.route('/post/<int:num>')
 def post(num):
