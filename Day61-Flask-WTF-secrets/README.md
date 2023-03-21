@@ -111,6 +111,107 @@ https://wtforms.readthedocs.io/en/2.3.x/crash_course/#displaying-errors
 - 이번에는 `validate_on_submit()`의 반환 값을 확인해볼텐데, 이 반환값은 사용자가 폼을 제출한 후 유효성 검증이 성공한 경우 `True`, 실패한 경우 `False`가 됨.
 
 
+## Jinja2로 템플릿 상속하기
+- 진자를 사용하여 웹 사이트를 템플릿화 할 수 있음
+- ```python
+  #hearder.html footer.html 을 삽입하는 코드
+    {% include "header.html%}
+    웹 페이지 컨텐츠
+    {% include "footer.html%}
+  ```
+### 템플릿 상속
+- 실제 전체 웹 사이트에 동일한 디자인 템플릿을 사용하고 싶지만 헤더나 푸터의 일부 코드를 변경해야 하는 때 사용
+- 클래스 상속과 유사해서 상위 템플릿을 가져와 하위 웹 페이지에서 스타일을 확장할 수 있음.
+```python
+#base.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
+```
+이 템플릿을 상속하는 하위 웹페이지에 의해 새 콘텐츠를 삽입할수 있는 미리 정의된 블록이 있음.
+1) success.html 페이지를 base.html 템플릿으로부터 상속하기
+```python
+#success.html
+#1.
+{% extends "base.html" %}
+#2.
+{% block title %}Success{% endblock %}
+#3.
+{% block content %}
+   <div class="container">
+      <h1>Top Secret </h1>
+      <iframe src="https://giphy.com/embed/Ju7l5y9osyymQ" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+      <p><a href="https://giphy.com/gifs/rick-astley-Ju7l5y9osyymQ">via GIPHY</a></p>
+   </div>
+{% endblock %}
+```
+(#1) 이 라인은 템플릿 엔진(진자)이 'base.html'을 이 페이지의 템플릿으로 사용하도록 명령
+
+(#2) 이 블록은 템플릿의 헤더에 사용자 정의된 제목을 삽입함.
+
+(#3) 이 블록은 웹 사이트의 콘텐츠를 제공하며, 해당 부분은 웹 페이지마다 달라짐.
+
+2) success.html 에 적용하면..
+```python
+#success.html
+{% extends "base.html" %}
+{% block title %}Success{% endblock %}
+{% block content %}
+   <div class="container">
+      <h1>Top Secret </h1>
+      <iframe src="https://giphy.com/embed/Ju7l5y9osyymQ" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+      <p><a href="https://giphy.com/gifs/rick-astley-Ju7l5y9osyymQ">via GIPHY</a></p>
+   </div>
+{% endblock %}
+```
+
+3) base.html에 배경 추가하면..
+```python
+<style>
+{% block styling %}
+body{
+    background: purple;
+}
+{% endblock %}
+</style>
+```
+success.html과 denied.html 모두 보라색 배경이됨.
+
+4) denied.html 에서만 글자 색 추가로 바꾸기
+```python
+#denied.html
+{% block styling %}
+   {{ super() }}
+   h1 {
+      color:red;
+   }
+{% endblock %}
+```
+
+## 플라스크 부트스트랩을 상속된 템플릿으로 사용하기
+1) 설치
+`pip install Flask-Bootstrap`
+2) 문서에 따라 파일 수정
+https://pythonhosted.org/Flask-Bootstrap/basic-usage.html
+
+## WTForms를 지원하는 플라스크 부트스트랩
+- WTForms로 폼을 만드는 가장 편리한 방법
+- `{{wtf.quick_form(form)}}`을 사용하면 한 줄의 코드로 간단하게 폼을 만들 수 있음.
+- 탬플릿에 상속된 WTForms 객체(`form`)를 가져옴으로써 폼에 대한 모든 레이블, 입력, 버튼, 스타일을 생성함.
+- 전체 요소를 삭제하고, 부트스트랩으로부터 wtf 지원을 상속하기위한 줄을 추가한 다음 `quick_form()`을 사용하기만 하면 간단하게 나만의 `form`을 생성할 수 있음.
+- ```python
+    {% import "bootstrap/wtf.html" as wtf %}
+  ...
+    {{wtf.quick_form(form, novalidate=True) }}
+  ```
+
 
 ## requirements.txt
 - 필요한 라이브러리(프로젝트에 필요한 설치 패키지들)와 버전을 명시할 수 있다.

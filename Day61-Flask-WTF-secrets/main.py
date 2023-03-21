@@ -2,16 +2,16 @@ from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length
-
+from flask_bootstrap import Bootstrap
 
 class LoginForm(FlaskForm):
     email = StringField(label='Email', validators=[DataRequired(), Email()])
     password = PasswordField(label='Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField(label="Log In")
 
-
 app = Flask(__name__)
 app.secret_key = "qwerasdf"
+Bootstrap(app)
 
 
 @app.route("/")
