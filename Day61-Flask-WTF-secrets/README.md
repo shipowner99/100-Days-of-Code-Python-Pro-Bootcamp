@@ -19,7 +19,7 @@ https://flask-wtf.readthedocs.io/en/1.0.x/form/
   - https://owasp.org/www-community/attacks/csrf
   - 모르는 사람에게 돈을 송금하는 등 사용자가 자신의 의지와는 무관한 행동을 하게 하는 공격
   - 이런 공격은 웹사이트의 보안을 해침.
-- 웹사이트의 입력양식을 만들 때 보통 Flask-WTF 를 사용하지만 실제로 HTML 입력양식으로 만든 프로젝트도 있끼 때문에 두 가지 방법의 동작원리를 이해하는 것이 중요함.
+  - 웹사이트의 입력양식을 만들 때 보통 Flask-WTF 를 사용하지만 실제로 HTML 입력양식으로 만든 프로젝트도 있끼 때문에 두 가지 방법의 동작원리를 이해하는 것이 중요함.
 ## Flask-WTF 설치
   - 터미널에서 `pip install Flask-WTF`
 
@@ -62,6 +62,53 @@ https://flask-wtf.readthedocs.io/en/1.0.x/form/
     {{ form.password.label }} {{ form.password(size=30) }}
     <input type="submit"  value="Log In">
   ```
+## 유효성 검사 추가하기
+### 1. validator 객체 추가하기
+- ```python
+  #main.py
+  from wtforms.validators import DataRequired
+  
+  #main.py
+  email = StringField(label='Email', validators=[DataRequired])
+  password = PasswordField(label='Password', validators=[DataRequired])
+  ```
+- `validators` 매개변수는 validator 객체의 리스트
+- DataRequired : 데이터를 필수로 입력해야함. 사용자가 아무것도 입력하지 않을 경우, 오류가 발생
+- 입력양식이 제출된 후 오류가 많으면 `errors` 리스트가 생성되어 오류를 발생시킨 필드의 프로퍼티로 HTML에 전달됨
+- 예) `form.<field>.errors`
+### 2. 오류 발생시, 반복문을 사용하여 이 오류들을 텍스트로 보여줄 수 있음.
+https://wtforms.readthedocs.io/en/2.3.x/crash_course/#displaying-errors
+- ```python
+  {{ form.email.label }} <br> {{ form.email(size=30) }}
+  {% for error in form.email.errors: %}
+  <span style="color:red">{{error}}</span>
+  {% endfor %}
+  ```
+  
+### 3. 사용자가 제출 버튼을 눌렀을 때 입력 값의 유효성을 검증하기.
+- 기존 코드를 수정하여 `POST`요청에 응답 후 데이터를 `validate_on_submit()`으로 검증할 수 있어야 함.
+- ```python
+  @app.route("/login", methods=["GET", "POST"])
+  def login():
+    login_form = LoginForm()
+    login_form.validate_on_submit()
+      return render_template('login.html', form=login_form)
+  ```
+- 이 동작은 WTForm의 유효성 검증이 아니라, 브라우저에 내장된 검증 방법으로 브라우저마다 다르다.
+- 사용자가 인터넷 익스플로러를 사용한다면, 별도의 검증 방법이 없음.
+
+### 4. 모든 사용자가 입력창의 유효성 검증을 받도록 입력 양식에 `novalidate`라는 속성으로 브라우저 검증을 꺼야 함.
+- ```python
+  #login.html
+  <form method="POST" action="{{url_for('login')}}" novalidate>
+  ```
+## WTForms로 폼 데이터 수신하기
+- HTML 에서는 플라스크의 request객체 사용
+- WTForms 에서는 `<form_object>.<form_filed>.data` 사용
+- https://wtforms.readthedocs.io/en/2.3.x/crash_course/#how-forms-get-data
+- 단, 필드 데이터를 인쇄하기 전에 폼이 제출된 것인지(POST 요청) 아니면 해당 폼이 렌더링 될 때 GET 요청된 것인지 여부를 확인해야함
+- 앞에서는 `if request.method == "POST`를 사용함.
+- 이번에는 `validate_on_submit()`의 반환 값을 확인해볼텐데, 이 반환값은 사용자가 폼을 제출한 후 유효성 검증이 성공한 경우 `True`, 실패한 경우 `False`가 됨.
 
 
 
