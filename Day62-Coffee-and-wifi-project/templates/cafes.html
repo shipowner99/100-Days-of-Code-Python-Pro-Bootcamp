@@ -28,10 +28,15 @@
           {% if not row == cafes[0]: %}
           <tr>
             {% for cell in row: %}
-            <td>{{cell}}</td>
+              {% if cell == row[1]: %}
+                <td><a href="{{cell}}">Maps Link</a></td>
+              {% else %}
+                <td>{{cell}}</td>
+              {% endif %}
             {% endfor %}
           </tr>
           {% endif %}
+
         {% endfor %}
 
 
