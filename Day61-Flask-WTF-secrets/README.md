@@ -28,16 +28,16 @@ https://flask-wtf.readthedocs.io/en/1.0.x/form/
 - import 모듈:
 - ```python
   #main.py
-    from flask_wtf import FlaskForm
-    from wtforms import StringField
-   ```
+  from flask_wtf import FlaskForm
+  from wtforms import StringField
+  ```
 - FlaskForm 이용하여 form 만들기:
 - ```python
-    #main.py
-    class LoginForm(FlaskForm):
-        email = StringField('Email')
-        password = StringField('Password')
-    ```
+  #main.py
+  class LoginForm(FlaskForm):
+      email = StringField('Email')
+      password = StringField('Password')
+  ```
 - form 사용하기:
 - ```python
   #main.py
@@ -56,11 +56,11 @@ https://flask-wtf.readthedocs.io/en/1.0.x/form/
 - rendering 하기:
 - ```python 
   #login.html
-    <form method="POST" action="{{url_for('login')}}">
-    {{ form.csrf_token }}
-    {{ form.email.label }} {{ form.email(size=30) }}
-    {{ form.password.label }} {{ form.password(size=30) }}
-    <input type="submit"  value="Log In">
+  <form method="POST" action="{{url_for('login')}}">
+  {{ form.csrf_token }}
+  {{ form.email.label }} {{ form.email(size=30) }}
+  {{ form.password.label }} {{ form.password(size=30) }}
+  <input type="submit"  value="Log In">
   ```
 ## 유효성 검사 추가하기
 ### 1. validator 객체 추가하기
