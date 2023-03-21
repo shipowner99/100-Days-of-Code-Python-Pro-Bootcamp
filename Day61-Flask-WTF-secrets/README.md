@@ -69,8 +69,8 @@ https://flask-wtf.readthedocs.io/en/1.0.x/form/
   from wtforms.validators import DataRequired
   
   #main.py
-  email = StringField(label='Email', validators=[DataRequired])
-  password = PasswordField(label='Password', validators=[DataRequired])
+  email = StringField(label='Email', validators=[DataRequired()])
+  password = PasswordField(label='Password', validators=[DataRequired()])
   ```
 - `validators` 매개변수는 validator 객체의 리스트
 - DataRequired : 데이터를 필수로 입력해야함. 사용자가 아무것도 입력하지 않을 경우, 오류가 발생
