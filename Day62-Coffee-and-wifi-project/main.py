@@ -20,12 +20,7 @@ class CafeForm(FlaskForm):
     power = SelectField('Power Socket Availability', choices=['✘', "🔌", "🔌🔌", "🔌🔌🔌", "🔌🔌🔌🔌", "🔌🔌🔌🔌🔌"])
     submit = SubmitField('Submit')
 
-# Exercise:
-# add: Location URL, open time, closing time, coffee rating, wifi rating, power outlet rating fields
-# make coffee/wifi/power a select element with choice of 0 to 5.
-#e.g. You could use emojis ☕️/💪/✘/🔌
-# make all fields required except submit
-# use a validator to check that the URL field has a URL entered.
+
 # ---------------------------------------------------------------------------
 
 
@@ -40,7 +35,13 @@ def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
         f = open('cafe-data.csv', 'a', encoding='utf8')
-        f.write(f"\n{form.cafe.data}, {form.location.data}, {form.open.data}, {form.close.data}, {form.coffee.data}, {form.wifi.data}, {form.power.data}")
+        f.write(f"\n{form.cafe.data}, "
+                f"{form.location.data}, "
+                f"{form.open.data}, "
+                f"{form.close.data}, "
+                f"{form.coffee.data}, "
+                f"{form.wifi.data}, "
+                f"{form.power.data}")
         f.close()
         return redirect(url_for('cafes'))
     return render_template('add.html', form=form)
