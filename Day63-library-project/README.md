@@ -1,4 +1,5 @@
 # 가상 책장 만들기
+Uploading Library - 프로필 2 - Microsoft​ Edge 2023-03-23 12-02-59.mp4…
 
 ## 목표
 - 플라스크 웹 사이트에 SQLite 데이터베이스 구축하기
