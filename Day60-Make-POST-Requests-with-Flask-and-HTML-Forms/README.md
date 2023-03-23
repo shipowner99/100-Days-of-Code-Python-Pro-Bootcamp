@@ -1,4 +1,5 @@
 # Make POST Requests with Flask and HTML Froms
+https://user-images.githubusercontent.com/120784842/227075302-f33bb782-53d5-41e4-aad3-1a5709f57420.mp4
 
 ## 플라스크 서버로 POST 요청 처리하기
 ### 1. HTML `<form>` 양식에 입력된 데이터를 POST 방식으로 서버로 제출하기
