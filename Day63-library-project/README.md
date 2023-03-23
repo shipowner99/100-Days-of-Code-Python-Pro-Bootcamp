@@ -107,6 +107,18 @@ if request.method == "POST":
     db.session.commit()
     return redirect(url_for('home'))
 ```
-### Delete 앵커 태그 추가하기
+### Delete에서 요청과 파라미터 보내고 받는 방법
+1. a태그로 GET 요청과 파라미터 보냄
+` <a href="{{ url_for('delete', id=book['id']) }}">Delete</a>
+2.main.html 에서 delete 함수를 만들어서 GET 요청 받고, request.args.get 으로 파라미터 받기. 
+```python
+@app.route("/delete")
+def delete():
+    book_id = request.args.get('id')
+    book_to_delete = Book.query.get(book_id)
+    db.session.delete(book_to_delete)
+    db.session.commit()
+    return redirect(url_for('home'))
+```
 
 
