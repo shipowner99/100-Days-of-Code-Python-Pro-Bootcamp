@@ -1,5 +1,5 @@
 # 가상 책장 만들기
-Uploading Library - 프로필 2 - Microsoft​ Edge 2023-03-23 12-02-59.mp4…
+https://user-images.githubusercontent.com/120784842/227091807-5a180a40-7ad1-4cda-bdeb-ae398202c91a.mp4
 
 ## 목표
 - 플라스크 웹 사이트에 SQLite 데이터베이스 구축하기
@@ -118,7 +118,11 @@ def delete():
     book_id = request.args.get('id')
     book_to_delete = Book.query.get(book_id)
     db.session.delete(book_to_delete)
-    db.session.commit()
+    db.session.com
+
+Uploading day64-library.mp4…
+
+mit()
     return redirect(url_for('home'))
 ```
 
