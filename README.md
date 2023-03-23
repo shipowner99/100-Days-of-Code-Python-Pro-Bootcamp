@@ -42,6 +42,7 @@ https://user-images.githubusercontent.com/120784842/227077257-8f85fd9f-fadd-4b87
 https://user-images.githubusercontent.com/120784842/227080739-ff7969fc-a9d5-4e2a-8ac8-9869f7834762.mp4
 
 ## Day63-library-project
+[공부내용](https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/tree/main/Day63-SQLite-database-flask-SQLAlchemy)
 [README](https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/tree/main/Day63-library-project)
 
 https://user-images.githubusercontent.com/120784842/227090545-6d803ce0-6567-43e5-a34d-fc57f2557292.mp4
