@@ -37,13 +37,14 @@ https://user-images.githubusercontent.com/120784842/227073857-50182d9f-f9b1-4dd0
 https://user-images.githubusercontent.com/120784842/227077257-8f85fd9f-fadd-4b87-89bf-76a6e39ab1ec.mp4
 
 ## Day62-Coffee-and-wifi-project
-[README]()
+[README](https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/tree/main/Day62-Coffee-and-wifi-project)
 
 https://user-images.githubusercontent.com/120784842/227080739-ff7969fc-a9d5-4e2a-8ac8-9869f7834762.mp4
 
-## Day63-SQLite-database-flask-SQLAlchemy-practice
-[README]()
-
-
 ## Day63-library-project
-[README]()
+[README](https://github.com/shipowner99/100-Days-of-Code-Python-Pro-Bootcamp/tree/main/Day63-SQLite-database-flask-SQLAlchemy)
+
+https://user-images.githubusercontent.com/120784842/227090545-6d803ce0-6567-43e5-a34d-fc57f2557292.mp4
+
+
+
