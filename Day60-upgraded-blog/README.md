@@ -1,5 +1,9 @@
 # 블로그 웹사이트에 배운 내용 적용하기
 
+
+https://user-images.githubusercontent.com/120784842/227074608-576b7f2c-f31e-4814-841f-39c86d8f99f2.mp4
+
+
 ## contact.html 
 - `name` attributes added to `<input>` elements.
 - ```python
