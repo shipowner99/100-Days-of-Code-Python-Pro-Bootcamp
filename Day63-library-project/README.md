@@ -70,55 +70,43 @@ book_to_delete = Book.query.get(book_id)
 db.session.delete(book_to_delete)
 db.session.commit()
 ```
-제목 또는 다른 속성별 특정 값을 조회하여 삭제할 수도 있습니다.
 
-## doc 읽기 위해 따로 공부한 것..
-### instance folder
-- Flask 에서 민감한 정보를 포함한 변수를 정의해야 할 때 사용
-- config.py 로 분리하여 저장.
-- database password나 API key 같은 것들 숨길 때 사용.
--애플리케이션의 레포지토리 루트의 하위 디렉토리로, 이 애플리케이션의 인스턴스를 위한 구성 파일을 포함합니다. 이를 사용하면 데이터베이스 비밀번호, API 키와 같은 비밀 정보를 숨길 수 있습니다. 이 폴더는 버전 관리에 포함되지 않아야 합니다.
-
-- Flask에서 instance folder를 사용하면 애플리케이션의 루트 디렉토리 외부에 위치하므로 로컬 데이터를 저장할 수 있습니다. 이 폴더는 버전 관리에 포함되지 않아야 하며, Flask는 이 폴더를 자동으로 생성하지 않습니다.
-
-### query 란
-질문, 문의하다란 뜻
-
-데이터베이스에게 특정한 데이터를 보여달라는 클라이언트의 요청을 말함. 
-
-쿼리문을 작성한다는 말은 데이터베이스에서 원하는 정보를 가져오는 코드를 작성한다는 뜻.
-데이터베이스를 사용하려면 SQL이라는 구조화된 질의를 작성하고 실행해야 하는 등 복잡한 과정이 필요함.
-
-### 데이터베이스 개념
-https://www.oracle.com/kr/database/what-is-database/
-데이터베이스는 구조화된 정보 또는 데이터의 조직화된 모음으로서 일반적으로 컴퓨터 시스템에 전자적으로 저장됩니다 데이터베이스는 일반적으로 데이터베이스 관리 시스템(DBMS)에 의해 제어됩니다. 연결된 애플리케이션과 함께 데이터와 DBMS를 하나로 묶어 데이터베이스 시스템이라고 하며 단축하여 데이터베이스라고도 합니다.
-
-오늘날 운영되고 있는 가장 일반적인 유형의 데이터베이스에서 데이터는 일반적으로 처리 및 데이터 쿼리를 효율적으로 수행하기 위해 일련의 테이블에서 행과 열로 모델링됩니다. 그러면 데이터에 쉽게 액세스하고 관리, 수정, 업데이트, 제어 및 구성할 수 있습니다. 대부분의 데이터베이스는 데이터 작성 및 쿼리에 SQL(Structured Query Language)을 사용합니다.
-
-### SQL(Structured Query Language)
-SQL은 데이터를 쿼리, 조작 및 정의하고 액세스 제어를 제공하기 위해 거의 모든 관계형 데이터베이스에서 사용되는 프로그래밍 언어입니다. 
-
-### 관계형 데이터베이스
-관계형 데이터베이스는 1980년대를 지배했습니다. 관계형 데이터베이스의 항목은 열과 행이 있는 테이블 집합으로 구성됩니다. 관계형 데이터베이스 기술은 정형 정보에 액세스하는 가장 효율적이고 유연한 방법을 제공합니다.
-데이터베이스의 유형 중 하나.
-
-### ORM(object relatinal mapping)
-개발자가 쿼리를 직접 작성하지 않아도 데이터베이스의 데이터를 처리할 수 있음.
-즉, 데이터베이스에 데이터를 저장하는 테이블을 파이썬 클래스로 만들어 관리하는 기술!
-- 장점: 데이터베이스의 종류에 상관 없이 일관된 코드를 유지할 수 있어서 프로그램을 유지.보수하기가 편리하다. 또한 내부에서 안전한 SQL쿼리를 자동으로 생성해주므로 개발자가 달라도 통일된 쿼리를 작성할 수 있고 오류 발생률도 줄일 수 있다. 
-파이썬 ORM 라이브러리 중 가자 많이 사용하는 것이 SQLAlchemy 임.
-
-#### model
-데이터를 다룰 목적으로 만든 파이썬 클래스이다. 데이터를 관리하는 데 사용하는 ORM 클래스를 모델이라고 한다. 모델을 사용하면 내부에서 SQL을 자동으로 생성해주므로 직접 작성하지 않아도 된다.
+### Edit Rating-평점 수정 페이지를 표시하기 위한 GET 요청 시 책 ID를 매개변수로 전달하는 방법
+1. a태그에서 url_for로 GET 요청과 동시에 매개변수도 같이 보낼 수 있음.
+```python 
+# index.html
+<a href="{{ url_for('edit', id=book.id) }}">Edit Rating</a>
+```
+2. GET 요청은 자동으로 받아짐. 매개 변수는 request.args.get('파라미터') 로 받을 수 있음.
+```python
+# main.html
+def edit():
+    id = request.args.get('id')
+    book_selected = Book.query.get(id)
+    return render_template('edit.html', book=book_selected)
+```
+3. form 으로 POST 요청을 보낼 수 있음.
+```python
+# edit.html
+<form action="{{ url_for('edit') }}" method="POST">
+<input hidden="hidden" name="id" value="{{book.id}}">
+<input name="rating" type="text" placeholder="New Rating">
+<button type="submit">Change Rating</button>
+```
+ 
+3. POST 요청은 request.method=="POST" 로 받기. 매개변수는 request.form["name"] 으로 받을 수 있음.
+```python
+# main.html
+@app.route("/edit", methods=['GET', 'POST'])
+def edit():
+if request.method == "POST":
+    #UPDATE RECORD
+    book_id = request.form["id"]
+    book_to_update = Book.query.get(book_id)
+    book_to_update.rating = request.form["rating"]
+    db.session.commit()
+    return redirect(url_for('home'))
+```
+### Delete 앵커 태그 추가하기
 
 
-
-### 데이터베이스 소프트웨어(DBMS) 
-데이터베이스 소프트웨어는 "데이터베이스 관리 시스템"(DBMS)이라고도 합니다.데이터베이스 소프트웨어는 사용자가 데이터를 구조화된 형태로 저장한 다음 액세스할 수 있도록 하여 데이터 관리를 간소화합니다. 일반적으로 데이터를 생성하고 관리하는 데 도움이 되는 그래픽 인터페이스가 있으며 경우에 따라 사용자는 데이터베이스 소프트웨어를 사용하여 데이터베이스를 구성합니다.인기 데이터베이스 소프트웨어 또는 DBMS로는 MySQL, Microsoft Access, Microsoft SQL Server, FileMaker Pro, Oracle Database 및 dBASE가 있습니다.
-
-
-
-
-### CLI(Command Line Interface)란?
-명령 줄 인터페이스(CLI, Command line interface) 또는 명령어 인터페이스는 텍스트 터미널을 통해 사용자와 컴퓨터가 상호 작용하는 방식을 뜻한다. 즉, 작업 명령은 사용자가 컴퓨터 키보드 등을 통해 문자열의 형태로 입력하며, 컴퓨터로부터의 출력 역시 문자열의 형태로 주어진다. ( - 위키백과 - )
-Windows 사용자들이 접하게 되는 CMD 창과 Mac OS 사용자들이 접하게 되는 Terminal 창이 바로 명령 줄 인터페이스를 제공하는 프로그램이다. 이제 이 프로그램을 어떻게 사용 해야 되는 지에 대해 알아보자. 우리는 이런 입출력이 가능하게 해주는 소프트웨어나 하드웨어를 터미널(terminal)이라고 한다. 또한, 사용자가 입력한 명령어를 해석해 주는 소프트웨어를 셸(shell)이라고 한다.

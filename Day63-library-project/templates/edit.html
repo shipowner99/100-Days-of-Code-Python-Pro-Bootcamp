@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Rating</title>
+</head>
+<body>
+
+<form action="{{url_for('edit')}}" method="post" >
+<!--     이 부분이 선생님이랑 다름, 선생님은 id 를 input으로 넣었지만 나는 url_for 안에 넣음.-->
+    <p>Book Name: {{book["title"]}}</p>
+    <p>Current Rating: {{book["rating"]}}</p>
+    <input hidden="hidden" name="id" value="{{book.id}}">
+    <input name='rating' type="text" placeholder="New Rating">
+    <button type="submit"> Change Rating </button>
+</form>
+
+</body>
+</html>
