@@ -1,4 +1,5 @@
 # Coffee and wifi project
+https://user-images.githubusercontent.com/120784842/227081182-61606893-41ed-4cb0-baa9-43549719b10b.mp4
 
 ## 목표
 플라스크 WTF, 플라스크 부트스트랩, 부트스트랩 클래스에 숙달하고 csv조작을 약간 수정하는 것

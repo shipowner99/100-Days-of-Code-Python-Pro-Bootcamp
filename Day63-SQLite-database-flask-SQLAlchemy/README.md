@@ -1,4 +1,4 @@
-# 가상 책장 만들기
+# SQLite database, flask-SQLAlchemy
 
 ## 목표
 - SQ 라이트 데이터베이스 생성하는 방법
