@@ -32,7 +32,7 @@ class Cafe(db.Model):
             #Create a new dictionary entry;
             #where the key is the name of the column
             # and the value is the vlaue of the column
-            dictionary[column.name] = getattr(self.column.name)
+            dictionary[column.name] = getattr(self, column.name)
         return dictionary
 
         # Method 2. Alternatively use Dictionary Comprehension to do the same thing.
@@ -68,7 +68,7 @@ def get_random_cafe():
     #     "coffee_price": random_cafe.coffee_price,
     # })
 
-@app.route(/'all')
+@app.route('/all')
 def get_all_cafes():
     cafes = db.session.query(Cafe).all()
     return jsonify()
