@@ -36,7 +36,7 @@ class Cafe(db.Model):
         return dictionary
 
         # Method 2. Alternatively use Dictionary Comprehension to do the same thing.
-        return  {column.name: getattr(self, column.name) for column in self.__table__.columns}
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 
 with app.app_context():
@@ -71,7 +71,7 @@ def get_random_cafe():
 @app.route('/all')
 def get_all_cafes():
     cafes = db.session.query(Cafe).all()
-    return jsonify()
+    return jsonify(cafes=[cafe.to_dict() for cafe in cafes] )
 ## HTTP POST - Create Record
 
 ## HTTP PUT/PATCH - Update Record
