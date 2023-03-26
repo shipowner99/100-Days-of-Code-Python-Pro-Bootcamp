@@ -101,7 +101,8 @@ def add():
     if form.validate_on_submit():
         parameters = {
             "api_key": API_KEY,
-            "query": form.title.data
+            "query": form.title.data,
+            "language" : 'ko-KR'
         }
         response = requests.get(url=SEARCH_URL, params=parameters)
         response.raise_for_status()
@@ -115,6 +116,7 @@ def get_movie():
     movie_api_id = request.args.get('movie_id')
     parameters = {
         "api_key": API_KEY,
+        "language": 'ko-KR'
     }
     response = requests.get(url=f"{INFO_URL}/{movie_api_id}", params=parameters)
     data = response.json()

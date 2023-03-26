@@ -68,3 +68,9 @@ https://flask-wtf.readthedocs.io/en/stable/
 https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/#a-minimal-application
 
 
+
+업그레이드 하고 싶은 것:
+1. edit에서 밑에 포스터 그림이 뜨게 해서 내가 고른 영화가 맞는지 확인할 수 있게 하기
+2. 랭킹이 오름차순으로 보이게 하기
+
+
