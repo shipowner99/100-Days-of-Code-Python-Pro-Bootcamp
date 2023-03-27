@@ -1,4 +1,9 @@
 # 영화 베스트 10 웹사이트
+
+
+https://user-images.githubusercontent.com/120784842/227960777-ba36f5dc-71bc-4afa-b722-313f7caaaaf0.mp4
+
+
 ## Introduction
 이 프로젝트는 Python과 Flask를 이용해 만들어진 '내가 정하는 역대 탑10 영화' 정보 웹사이트입니다. 
 
