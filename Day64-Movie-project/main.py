@@ -73,19 +73,17 @@ def home():
     # return render_template("index.html", movies=all_movies)
 
 @app.route("/edit", methods=["POST", "GET"])
-def edit():
+def rate_movie():
     form = MovieRatingForm()
     table_id = request.args.get('id')
-    print(f"edit{table_id}")
     movie_seleted = Movie.query.get(table_id)
     if form.validate_on_submit():
         movie_to_update = Movie.query.get(table_id)
-        print(movie_to_update)
         movie_to_update.rating = float(form.rating.data)
         movie_to_update.review = form.review.data
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('edit.html', movie = movie_seleted, form=form)
+    return render_template('edit.html', movie=movie_seleted, form=form)
 
 @app.route('/delete')
 def delete():
@@ -114,22 +112,23 @@ def add():
 @app.route('/get_movie', methods=["GET", "POST"])
 def get_movie():
     movie_api_id = request.args.get('movie_id')
-    parameters = {
-        "api_key": API_KEY,
-        "language": 'ko-KR'
-    }
-    response = requests.get(url=f"{INFO_URL}/{movie_api_id}", params=parameters)
-    data = response.json()
-    new_movie = Movie(
-        title=data["title"],
-        img_url=f"https://image.tmdb.org/t/p/w500{data['poster_path']}",
-        year=data["release_date"].split("-")[0],
-        description=data["overview"]
-    )
-    db.session.add(new_movie)
-    db.session.commit()
-    print(f"getmovie{new_movie.id}")
-    return redirect(url_for('edit', id=new_movie.id))
+    if movie_api_id:
+        parameters = {
+            "api_key": API_KEY,
+            "language": 'ko-KR'
+        }
+        response = requests.get(url=f"{INFO_URL}/{movie_api_id}", params=parameters)
+        data = response.json()
+        new_movie = Movie(
+            title=data["title"],
+            img_url=f"https://image.tmdb.org/t/p/w500{data['poster_path']}",
+            # The data in release_date includes month and day, we will want to get rid of.
+            year=data["release_date"].split("-")[0],
+            description=data["overview"]
+        )
+        db.session.add(new_movie)
+        db.session.commit()
+        return redirect(url_for('edit', id=new_movie.id))
 
 
 
