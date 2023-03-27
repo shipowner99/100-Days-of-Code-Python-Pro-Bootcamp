@@ -10,7 +10,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cafes.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-
 ##Cafe TABLE Configuration
 class Cafe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -119,7 +118,18 @@ def update_price(cafe_id):
 
 
 ## HTTP DELETE - Delete Record
-
+@app.route("/report-closed/<int:cafe_id>", methods=["DELETE"])
+def report_closed_cafe(cafe_id):
+    cafe_to_delete = Cafe.query.get(cafe_id)
+    if cafe_to_delete:
+        if request.args.get("api-key") == "TopSecretAPIKey":
+            db.session.delete(cafe_to_delete)
+            db.session.commit()
+            return jsonify(response={"success": "Successfully deleted the cafe from the database."}), 200
+        else:
+            return jsonify(error={"Forbidden": "Sorry, thas's not allowed. Make sure you have the correct api_key"}), 403
+    else:
+        return jsonify(error={"Not Found": "Sorry, a cafe with that id was not found in the database."}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
