@@ -19,6 +19,7 @@ Bootstrap(app)
 API_KEY = "d7d8a72794a94b94c2d1378231b1f9f0"
 SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
 INFO_URL = "https://api.themoviedb.org/3/movie"
+MOVIE_DB_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 
 class MovieRatingForm(FlaskForm):
     rating = FloatField('Your Rating Out of 10 e.g. 7.5', validators=[DataRequired()])
@@ -121,14 +122,14 @@ def get_movie():
         data = response.json()
         new_movie = Movie(
             title=data["title"],
-            img_url=f"https://image.tmdb.org/t/p/w500{data['poster_path']}",
+            img_url=f"{MOVIE_DB_IMAGE_URL}{data['poster_path']}",
             # The data in release_date includes month and day, we will want to get rid of.
             year=data["release_date"].split("-")[0],
             description=data["overview"]
         )
         db.session.add(new_movie)
         db.session.commit()
-        return redirect(url_for('edit', id=new_movie.id))
+        return redirect(url_for('rate_movie', id=new_movie.id))
 
 
 

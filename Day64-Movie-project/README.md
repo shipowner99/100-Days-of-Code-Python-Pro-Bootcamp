@@ -249,9 +249,17 @@ def home():
 ```
 
 
-### 요구사항 이외에 내가 업그레이드 해본 것:
-1. edit에서 밑에 포스터 그림이 뜨게 해서 내가 고른 영화가 맞는지 확인할 수 있게 하기
-
+### 강의 내용 이외에 내가 추가로 해본 것:
+1. edit에서 포스터 그림이 같이 뜨게 해서 내가 고른 영화가 맞는지 확인할 수 있게 하기
+```python
+#edit.html
+<div style="text-align : center">
+    <img src="{{movie['img_url']}}" alt="Poster" width="200">
+</div>
+<div style="margin-left: 100px;">
+    {{wtf.quick_form(form, novalidate=True) }}
+</div>
+```
 
 2. 영화를 보여줄 때, 평점이 높은 것부터 내림차순으로 정렬하고 순위를 매기려면??
 ```python
