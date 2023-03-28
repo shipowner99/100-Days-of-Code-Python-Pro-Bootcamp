@@ -5,7 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
-import datetime
+from datetime import date
 
 
 ## Delete this code:
@@ -70,23 +70,20 @@ def contact():
     return render_template("contact.html")
 
 @app.route("/new_post", methods=["POST", "GET"])
-def new_post():
+def add_new_post():
     form = CreatePostForm()
-    now = datetime.datetime.now()
     if form.validate_on_submit():
-        print("aaaa")
-        print(form.data)
         new_post = BlogPost(
-        title = form.data["title"],
-        subtitle = form.data["subtitle"],
-        date = f"{now.strftime('%B')} {now.strftime('%d')}, {now.strftime('%Y')}",
-        body = form.data["body"],
-        author = form.data["author"],
-        img_url = form.data["img_url"]
+        title = form.title.data,
+        subtitle = form.subtitle.data,
+        date = date.today().strftime("%B %d, %Y"),
+        body = form.body.data,
+        author = form.author.data,
+        img_url = form.img_url.data
         )
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for('get_all_posts'))
+        return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form)
 
 if __name__ == "__main__":
