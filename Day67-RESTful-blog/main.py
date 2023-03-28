@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
+import datetime
 
 
 ## Delete this code:
@@ -42,7 +43,7 @@ class CreatePostForm(FlaskForm):
     subtitle = StringField("Subtitle", validators=[DataRequired()])
     author = StringField("Your Name", validators=[DataRequired()])
     img_url = StringField("Blog Image URL", validators=[DataRequired(), URL()])
-    body = StringField("Blog Content", validators=[DataRequired()])
+    body = CKEditorField("Blog Content", validators=[DataRequired()])
     submit = SubmitField("Submit Post")
 
 
@@ -67,6 +68,26 @@ def about():
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
+
+@app.route("/new_post", methods=["POST", "GET"])
+def new_post():
+    form = CreatePostForm()
+    now = datetime.datetime.now()
+    if form.validate_on_submit():
+        print("aaaa")
+        print(form.data)
+        new_post = BlogPost(
+        title = form.data["title"],
+        subtitle = form.data["subtitle"],
+        date = f"{now.strftime('%B')} {now.strftime('%d')}, {now.strftime('%Y')}",
+        body = form.data["body"],
+        author = form.data["author"],
+        img_url = form.data["img_url"]
+        )
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for('get_all_posts'))
+    return render_template("make-post.html", form=form)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
