@@ -11,8 +11,6 @@
 {% endif %}
     <ul>
         {% for book in books: %}
-
-
         <li>
             <a href="{{ url_for('delete', id=book['id']) }}">Delete</a>
             {{book['title']}} - {{book['author']}} - {{book['rating']}}
