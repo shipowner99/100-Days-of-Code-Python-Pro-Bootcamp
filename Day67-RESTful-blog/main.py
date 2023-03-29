@@ -72,6 +72,7 @@ def contact():
 @app.route("/new_post", methods=["POST", "GET"])
 def add_new_post():
     form = CreatePostForm()
+    line = "New Post"
     if form.validate_on_submit():
         new_post = BlogPost(
         title = form.title.data,
@@ -84,7 +85,13 @@ def add_new_post():
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+    return render_template("make-post.html", form=form, line=line)
+
+@app.route("/edit-post/<post_id>")
+def edit_post(post_id):
+    line = "Edit Post"
+    return render_template("make-post.html", line=line)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
