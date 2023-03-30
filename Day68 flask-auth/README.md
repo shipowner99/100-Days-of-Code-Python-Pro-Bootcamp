@@ -168,6 +168,35 @@ def login():
             error = "You've already signed up with that email. Log in instead!"
             return render_template("login.html", error=error)
 ```
+### 인증상태를 템플릿에 전달하기
+사용자가 로그인할 때 홈페이지에 로그인/등록 버튼이 보이면 안 됩니다. 내비게이션 바에도 등록 또는 로그인이 보이면 안 됩니다.
+
+이렇게 되도록 base.html과 index.html에서 코드를 바꿀 수 있는지 시도해 보세요.
+
+이전 수업에서 base.html이 모든 페이지가 만들어지는 레이아웃 템플릿이라고 배웠던 것을 기억하세요.
+```python
+#base.html
+        {% if not logged_in: %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+      </li>
+        <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+      </li>
+        {% endif %}
+```
+```python
+#index.html
+    {% if not logged_in: %}
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-block btn-large">Login</a>
+    <a href="{{ url_for('register') }}" class="btn btn-secondary btn-block btn-large">Register</a>
+    {% endif %}
+```
+```python
+#main.py
+logged_in=current_user.is_authenticated
+# 위 코드를 페이지(홈페이지, register, secret) 렌더링 하는 곳에 넣어준다.
+```
 
 ## 참고 자료
 - Flask-Login

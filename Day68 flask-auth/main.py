@@ -29,7 +29,7 @@ class User(UserMixin, db.Model):
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template("index.html", logged_in=current_user.is_authenticated)
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -52,8 +52,9 @@ def register():
             )
             db.session.add(new_user)
             db.session.commit()
-            return render_template("secrets.html", name=request.form.get('name'))
-    return render_template("register.html")
+            login_user(new_user)
+            return redirect(url_for("secrets"))
+    return render_template("register.html", logged_in=current_user.is_authenticated)
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -67,7 +68,7 @@ def login():
             return render_template("login.html", error=error)
         elif check_password_hash(user.password, password):
             login_user(user)
-            return render_template("secrets.html", name=user.name)
+            return redirect(url_for('secrets'))
         else:
             error = "Password incorrect. Please try again."
             return render_template("login.html", error=error)
@@ -77,8 +78,7 @@ def login():
 @app.route('/secrets')
 @login_required
 def secrets():
-    print(current_user.name)
-    return render_template("secrets.html", name=current_user.name)
+    return render_template("secrets.html", name=current_user.name, logged_in=current_user.is_authenticated)
 
 @login_required
 @app.route('/download')
