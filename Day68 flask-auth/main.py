@@ -36,19 +36,23 @@ def home():
 def register():
     if request.method == "POST":
         data = request.form
-        hash_and_salted_password = generate_password_hash(
-            data.get('password'),
-            method='pbkdf2:sha256',
-            salt_length=8
-        )
-        new_user = User(
-            email=data.get('email'),
-            password=hash_and_salted_password,
-            name=data.get('name')
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        return render_template("secrets.html", name=request.form.get('name'))
+        if User.query.filter_by(email=data.get('email')).first():
+            error = "You've already signed up with that email. Log in instead!"
+            return render_template("login.html", error=error)
+        else:
+            hash_and_salted_password = generate_password_hash(
+                data.get('password'),
+                method='pbkdf2:sha256',
+                salt_length=8
+            )
+            new_user = User(
+                email=data.get('email'),
+                password=hash_and_salted_password,
+                name=data.get('name')
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template("secrets.html", name=request.form.get('name'))
     return render_template("register.html")
 
 
@@ -58,9 +62,16 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
         user = User.query.filter_by(email=email).first()
-        if check_password_hash(user.password, password):
+        if user is None:
+            error = "The email does not exist. Please try again."
+            return render_template("login.html", error=error)
+        elif check_password_hash(user.password, password):
             login_user(user)
-        return render_template("secrets.html", name=user.name)
+            return render_template("secrets.html", name=user.name)
+        else:
+            error = "Password incorrect. Please try again."
+            return render_template("login.html", error=error)
+
     return render_template("login.html")
 
 @app.route('/secrets')

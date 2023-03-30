@@ -132,3 +132,47 @@ def logout():
     return redirect(url_for('home'))
 
 ```
+### 플라스크 플래시 메시지
+사용자가 수행한 작업에 대한 피드백을 제공하고자 하는 경우가 생길 수 있습니다. 예를 들어 '로그인에 문제가 있었나요?', '잘못된 비밀번호를 입력했거나 이메일이 존재하지 않습니까?'와 같은 피드백을 전달하고 싶은 상황에서 로그인 페이지로 계속 리디렉션하는 대신 무엇이 잘못되었는지 알려준다면 좋은 사용자 경험을 제공할 수 있을 것입니다.
+
+이를 위한 가장 쉬운 방법은 플라스크 플래시(Flask Flash) 메시지를 사용하는 것입니다. 이는 템플릿으로 전송되어 한 번만 표시되는 메시지로, 페이지를 새로고침하면 사라집니다.
+
+https://flask.palletsprojects.com/en/1.1.x/patterns/flashing/
+
+1. 아래 예시와 같이 사용자의 이메일이 데이터베이스에 없는 경우, 사용자에게 플래시 메시지를 보내 이를 알리고 로그인 경로로 다시 리디렉션하도록 로그인 경로를 업데이트하세요. 예)
+```python
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        user = User.query.filter_by(email=email).first()
+        if user is None:
+            error = "The email does not exist. Please try again."
+            return render_template("login.html", error=error)
+```
+
+2. 아래 예시와 같이 check_password 함수가 False를 반환하면 사용자를 다시 로그인 페이지로 리디렉션할 때 플래시 메시지를 보내도록 로그인 경로를 업데이트하세요.
+```python
+        elif check_password_hash(user.password, password):
+            login_user(user)
+            return render_template("secrets.html", name=user.name)
+        else:
+            error = "Password incorrect. Please try again."
+            return render_template("login.html", error=error)
+```
+
+3. 아래 예시와 같이 사용자가 입력한 이메일이 데이터베이스에 이미 존재할 경우 로그인 페이지로 리디렉션하고 이미 등록된 사용자임을 알리는 플래시 메시지가 표시되도록 /register 경로를 업데이트하세요.
+```python
+        if User.query.filter_by(email=data.get('email')).first():
+            error = "You've already signed up with that email. Log in instead!"
+            return render_template("login.html", error=error)
+```
+
+## 참고 자료
+- Flask-Login
+https://flask-login.readthedocs.io/en/latest/#flask_login.login_required
+- mixin classes in python
+https://www.thedigitalcatonline.com/blog/2020/03/27/mixin-classes-in-python/
+- Flask-Message Flashing
+https://flask.palletsprojects.com/en/2.2.x/patterns/flashing/
