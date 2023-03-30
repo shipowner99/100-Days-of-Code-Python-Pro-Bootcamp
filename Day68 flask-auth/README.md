@@ -78,3 +78,57 @@ def register():
         db.session.commit()
         return render_template("secrets.html", name=request.form.get('name'))
 ```
+
+### Flask_Login 패키지로 사용자 인증하기
+현재는 /secrets으로 이동하면 기밀 페이지와 다운로드 링크가 표시되며, 인증 장벽이 없습니다. 등록/로그인한 사용자만 해당 페이지를 보고 파일을 다운로드할 수 있도록 하려면 어떻게 해야 할까요?
+
+서버의 특정 경로를 보호하고 인증된 사용자만 접근할 수 있도록 해야 합니다.
+
+이를 위해 대다수의 플라스크 개발자는 Flask_Login 패키지를 사용합니다.
+
+고난이도 과제:
+
+Flask_Login 문서를 사용하여 /login 경로를 만들어보세요. /secrets 경로는 로그인한 사용자만 접근할 수 있도록 보호되어야 합니다.
+
+```python
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(UserMixin, db.Model):
+    pass
+
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        user = User.query.filter_by(email=email).first()
+        if check_password_hash(user.password, password):
+            login_user(user)
+        return render_template("secrets.html", name=user.name)
+    return render_template("login.html")
+
+@app.route('/secrets')
+@login_required
+def secrets():
+    print(current_user.name)
+    return render_template("secrets.html", name=current_user.name)
+
+@login_required
+@app.route('/download')
+def download():
+    return send_from_directory(directory='static', path="files/cheat_sheet.pdf")
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+```

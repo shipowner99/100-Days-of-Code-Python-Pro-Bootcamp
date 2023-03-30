@@ -10,6 +10,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 ##CREATE TABLE IN DB
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,28 +51,35 @@ def register():
         return render_template("secrets.html", name=request.form.get('name'))
     return render_template("register.html")
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
 
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        user = User.query.filter_by(email=email).first()
+        if check_password_hash(user.password, password):
+            login_user(user)
+        return render_template("secrets.html", name=user.name)
     return render_template("login.html")
 
-
 @app.route('/secrets')
+@login_required
 def secrets():
-    return render_template("secrets.html")
+    print(current_user.name)
+    return render_template("secrets.html", name=current_user.name)
 
-
-@app.route('/logout')
-def logout():
-    pass
-
-
+@login_required
 @app.route('/download')
 def download():
     return send_from_directory(directory='static', path="files/cheat_sheet.pdf")
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
 
 
 if __name__ == "__main__":
