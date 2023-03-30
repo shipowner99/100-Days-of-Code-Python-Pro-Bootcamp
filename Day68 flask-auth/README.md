@@ -41,3 +41,40 @@ https://flask.palletsprojects.com/en/2.2.x/api/#flask.send_from_directory
 def download():
     return send_from_directory(directory='static', path="files/cheat_sheet.pdf")
 ```
+
+### Werkzeug를 사용하여 비밀번호 해싱하기
+이 시점에서 사용자의 비밀번호는 데이터베이스에 일반 텍스트로 저장됩니다:
+
+1. 데이터베이스에서 해시되지 않은 이전 항목을 삭제하세요.
+
+비밀번호를 저장하기 전에 해시를 통해 사용자의 비밀번호를 보호합니다.
+
+이를 위해서는 벡자이크(Werkzeug)의 헬퍼 함수 generate_password_hash()를 사용합니다.
+
+2. 다음 링크의 문서를 사용하여 사용자 비밀번호를 해싱 및 솔트하는 방법을 알아내 보세요.
+https://werkzeug.palletsprojects.com/en/2.2.x/utils/#module-werkzeug.security
+
+pbkdf2:sha256을 사용하여 비밀번호를 해시하고
+
+솔트 길이(salt length) 8을 추가하세요.
+```python
+from werkzeug.security import generate_password_hash
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        data = request.form
+        hash_and_salted_password = generate_password_hash(
+            data.get('password'),
+            method='pbkdf2:sha256',
+            salt_length=8
+        )
+        new_user = User(
+            email=data.get('email'),
+            password=hash_and_salted_password,
+            name=data.get('name')
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template("secrets.html", name=request.form.get('name'))
+```

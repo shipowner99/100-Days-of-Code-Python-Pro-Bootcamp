@@ -29,9 +29,14 @@ def home():
 def register():
     if request.method == "POST":
         data = request.form
+        hash_and_salted_password = generate_password_hash(
+            data.get('password'),
+            method='pbkdf2:sha256',
+            salt_length=8
+        )
         new_user = User(
             email=data.get('email'),
-            password=data.get('password'),
+            password=hash_and_salted_password,
             name=data.get('name')
         )
         db.session.add(new_user)
@@ -39,6 +44,9 @@ def register():
         return render_template("secrets.html", name=request.form.get('name'))
     return render_template("register.html")
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 @app.route('/login')
 def login():
