@@ -189,10 +189,30 @@ def logout():
 2. 사용자에게 해당 버튼이 보이진 않지만, 수동으로 /edit-post, /new-post 및 /delete 라우트에 액세스할 수 있습니다.  @admin_only라는 Python 데코레이터를 생성해서 해당 라우트를 보호하십시오.
 
 액세스를 시도하는 현재 사용자의 id가 1이라면 해당 라우트에 액세스할 수 있지만, id가 1이 아니라면 403 오류(권한 없음)를 받습니다.
+```python
+def admin_only(func):
+    @wraps(func)
+    def dec_function(*args, **kwargs):
+        if current_user.id == 1:
+            return func(*args, **kwargs)
+        else:
+            return abort(403)
+    return dec_function
 
+#Mark with decorator
+@admin_only
+def add_new_post():
+#...
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+@admin_only
+def edit_post(post_id):
+#...
+@app.route("/delete/<int:post_id>")
+@admin_only
+def delete_post(post_id):
+#...
+```
 
-
-최종 목표:
 
 
 ## 참고 문서
