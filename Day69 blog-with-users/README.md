@@ -133,10 +133,23 @@ def login():
     return render_template("login.html", form=form)
 ```
 
-5. 어떻게 내비게이션 바를 업데이트하면 사용자가 로그인하지 않은 경우 다음과 같이 표시되도록 할 수 있는지 알아내 보세요.
+5. 어떻게 내비게이션 바를 업데이트하면 사용자가 로그인하지 않은 경우, 단, 사용자가 등록 후 로그인/인증된 경우에는 내비게이션 바에 다르게 표시되어야 합니다.
+```python
+#header.html
+        {% if not current_user.is_authenticated: %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+          </li>
+        {% else: %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
+          </li>
+         {% endif %}
+```
 
-
-단, 사용자가 등록 후 로그인/인증된 경우에는 내비게이션 바에 다음과 같이 표시되어야 합니다.
 
 
 힌트: 내비게이션 바 코드는 header.html 안에 있습니다.
