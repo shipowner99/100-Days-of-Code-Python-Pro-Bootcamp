@@ -113,9 +113,25 @@ else: ## MORE CODE BELOW
 ```
 4. /login 경로에서 사용자의 이메일이 데이터베이스에 존재하지 않거나 비밀번호가 check_password()를 사용하여 저장된 것과 일치하지 않을 경우, 다시 /login으로 리디렉션하고, 사용자에게 어떤 문제가 발생했는지 알리고 다시 시도하도록 요청하는 플래시 메시지가 표시되도록 해야 합니다.
 ```python
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None:
+            flash("invalid email!")
+            return redirect(url_for('login'))
 
+        elif not check_password_hash(user.password, form.password.data):
+            flash("password not correct")
+            return redirect(url_for('login'))
+
+        else:
+            login_user(user)
+            return redirect(url_for('get_all_posts'))
+
+    return render_template("login.html", form=form)
 ```
-
 
 5. 어떻게 내비게이션 바를 업데이트하면 사용자가 로그인하지 않은 경우 다음과 같이 표시되도록 할 수 있는지 알아내 보세요.
 
