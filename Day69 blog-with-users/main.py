@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm,  RegisterForm
+from forms import CreatePostForm,  RegisterForm, LoginForm
 from flask_gravatar import Gravatar
 
 app = Flask(__name__)
@@ -19,7 +19,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
 
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
 ##CONFIGURE TABLES
 
 class BlogPost(db.Model):
@@ -53,10 +58,10 @@ def get_all_posts():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        # if User.query.filter_by(email=form.email.data).first():
-        #     error = "You've already signed up with that email. Log in instead!"
-        #     return render_template("login.html", error=error)
-        # else:
+        if User.query.filter_by(email=form.email.data).first():
+            flash("You've already signed up with that email, log in instead!")
+            return redirect(url_for('login'))
+        else:
             hash_and_salted_password = generate_password_hash(
                 form.password.data,
                 method='pbkdf2:sha256',
@@ -69,14 +74,23 @@ def register():
             )
             db.session.add(new_user)
             db.session.commit()
+            login_user(new_user)
             return redirect(url_for('get_all_posts'))
 
     return render_template("register.html", form=form)
 
 
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+
+        if check_password_hash(user.password, form.password.data):
+            login_user(user)
+            return redirect(url_for('get_all_posts'))
+
+    return render_template("login.html", form=form)
 
 
 @app.route('/logout')
