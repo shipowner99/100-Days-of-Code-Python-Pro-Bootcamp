@@ -159,5 +159,41 @@ def logout():
     logout_user()
     return redirect(url_for('get_all_posts'))
 ```
+### 요구 사항 3 - 경로 보호
+우리가 만든 블로그에서는 최초로 등록된 사용자가 관리자가 됩니다. 관리자는 새 블로그 게시물을 생성할 수 있고, 게시물 수정 및 삭제도 할 수 있습니다.
+
+1. 최초 사용자의  id 는 1입니다. 여기서 index.html 파일과 post.html 파일을 수정해서 관리자에게만 “새 게시물 생성”과 게시물 “수정” 및 “삭제” 버튼이 보이게 할 수 있습니다.
+```python
+#index.html
+<!--        If user id is 1 then they can see the delete button -->
+            {% if current_user.id == 1: %}
+            <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
+            {% endif %}
+<!--    If user id is 1 then they can see the Create New Post button -->
+        {% if current_user.id == 1: %}
+        <div class="clearfix">
+          <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
+        </div>
+        {% endif %}
+```
+```python
+#post.html
+<!--           If user id is 1 then they can see the Edit Post button -->
+          {% if current_user.id == 1 %}
+           <div class="clearfix">
+          <a class="btn btn-primary float-right" href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
+          </div>
+          {% endif %}
+```
+
+2. 사용자에게 해당 버튼이 보이진 않지만, 수동으로 /edit-post, /new-post 및 /delete 라우트에 액세스할 수 있습니다.  @admin_only라는 Python 데코레이터를 생성해서 해당 라우트를 보호하십시오.
+
+액세스를 시도하는 현재 사용자의 id가 1이라면 해당 라우트에 액세스할 수 있지만, id가 1이 아니라면 403 오류(권한 없음)를 받습니다.
+
+
+
+최종 목표:
+
+
 ## 참고 문서
-https://flask-login.readthedocs.io/en/latest/#login-example
+- https://flask-login.readthedocs.io/en/latest/#login-example

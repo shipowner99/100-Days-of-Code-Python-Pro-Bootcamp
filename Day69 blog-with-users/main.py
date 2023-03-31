@@ -85,7 +85,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None:
+        if user is None:
             flash("That email does not exist, please try again.")
             return redirect(url_for('login'))
 
