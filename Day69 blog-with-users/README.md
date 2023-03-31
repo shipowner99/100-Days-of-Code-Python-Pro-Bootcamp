@@ -150,16 +150,14 @@ def login():
          {% endif %}
 ```
 
-
-
-힌트: 내비게이션 바 코드는 header.html 안에 있습니다.
-
-힌트: https://flask-login.readthedocs.io/en/latest/#login-example
-
-해답
-
-
-
 6. 사용자가 로그아웃 버튼을 클릭하면 로그아웃하고 홈페이지로 다시 이동하도록 /logout 경로를 코딩하세요.
 
 다음과 같이 되어야 합니다.
+```python
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('get_all_posts'))
+```
+## 참고 문서
+https://flask-login.readthedocs.io/en/latest/#login-example
