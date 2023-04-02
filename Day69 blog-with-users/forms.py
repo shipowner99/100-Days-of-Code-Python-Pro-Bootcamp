@@ -20,4 +20,8 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("SIGN ME UP!")
+    submit = SubmitField("Login")
+
+class CommentForm(FlaskForm):
+    comment = CKEditorField("Comment", validators=[DataRequired()])
+    submit = SubmitField("Submit comment")

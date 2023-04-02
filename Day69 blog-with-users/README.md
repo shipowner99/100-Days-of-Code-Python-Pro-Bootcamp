@@ -310,7 +310,155 @@ author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 힌트: BlogPost 의 author 프로퍼티는 User 객체가 됩니다.
 
 
+### 요구 사항 4 - 모든 사용자가 블로그 게시물에 댓글을 추가할 수 있도록 하기
+1. form.py 파일에 CommentForm을 생성하면 사용자가 댓글을 작성할 수 있는 CKEditorField가 단 하나만 생길 것입니다.
+```python
+#forms.py
+class CommentForm(FlaskForm):
+    comment_text = CKEditorField("Comment", validators=[DataRequired()])
+    submit = SubmitField("Submit Comment")
 
+#post.html
+          #Load the CKEditor
+            {{ ckeditor.load() }}
+          #Configure it with the name of the form field from CommentForm
+            {{ ckeditor.config(name='comment_text') }}
+          #Create the wtf quickform from CommentForm
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+```
+
+다음 단계는 사용자가 댓글을 작성하고 저장할 수 있도록 하는 것입니다. 데이터베이스 내 테이블 간에 관계를 어떻게 설정하는지 배웠습니다. 어느 사용자든 게시물에 댓글을 작성할 수 있는 새로운 테이블을 생성해 관계를 업그레이드해 봅시다.
+
+2. tablename이  "comments"인  Comment(댓글) 테이블을 만드세요. id와 text프로퍼티를 넣어서 CKEditor에 기본 키와 텍스트가 들어가도록 하십시오.
+```python
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+```
+
+3. 부모에 해당하는 User 테이블과 자식에 해당하는 Comment 테이블 간에 일대다 관계를 설정하십시오. 한 User가 다수의 Comment 객체에 연결될 것입니다.
+```python
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    posts: Mapped[List["BlogPost"]] = relationship(back_populates="author")
+    comments: Mapped[List["Comment"]] = relationship(back_populates="comment_author")
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    comment_author: Mapped["User"] = relationship(back_populates="comments")
+```
+
+4. 부모에 해당하는 각 BlogPost객체와 자식에 해당하는 Comment객체 간에 일대다 관계를 설정하십시오. 각 BlogPost에 관련된 Comment객체가 여러 개 있을 수 있습니다.
+```python
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    posts: Mapped[List["BlogPost"]] = relationship(back_populates="author")
+    comments: Mapped[List["Comment"]] = relationship(back_populates="comment_author")
+
+class BlogPost(db.Model):
+    __tablename__ = "blog_posts"
+    id = db.Column(db.Integer, primary_key=True)
+    author = db.Column(db.String(250), nullable=False)
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    subtitle = db.Column(db.String(250), nullable=False)
+    date = db.Column(db.String(250), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    img_url = db.Column(db.String(250), nullable=False)
+    author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    author: Mapped["User"] = relationship(back_populates="posts")
+    comments: Mapped[List["Comment"]] = relationship(back_populates="parent_post")
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    comment_author: Mapped["User"] = relationship(back_populates="comments")
+    post_id: Mapped[int] = mapped_column(ForeignKey("blog_posts.id"))
+    parent_post: Mapped["BlogPost"] = relationship(back_populates="comments")
+```
+
+5. 이렇게 새 테이블을 추가하면, 기존의 blog.db 파일을 완전히 삭제하고 db.create_all() 라인을 이용해 모든 테이블을 새로 생성하는 것이 좋습니다.
+
+단, 새로운 관리자(id == 1)와 새 게시물 그리고 댓글을 작성할 다른 사용자를 생성해야 합니다.
+
+
+6. 사용자 ‘아무개’로(혹은 관리자가 아닌 다른 사용자로서) 로그인해 게시물에 댓글을 작성해 보세요. 이를 위해서는 /post/<int:post_id> 라우트를 업데이트해야 합니다. 인증된(로그인된) 사용자만 댓글을 저장할 수 있도록 주의하십시오. 로그인하지 않았다면, 로그인하라는 메시지를 띄우고 /login로 리디렉션하십시오.
+```python
+@app.route("/post/<int:post_id>", methods=["GET", "POST"])
+def show_post(post_id):
+    form = CommentForm()
+    requested_post = BlogPost.query.get(post_id)
+
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to comment.")
+            return redirect(url_for("login"))
+
+        new_comment = Comment(
+            text=form.comment_text.data,
+            comment_author=current_user,
+            parent_post=requested_post
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+
+    return render_template("post.html", post=requested_post, form=form, current_user=current_user)
+```
+
+7. post.html 파일의 코드를 업데이트해 게시물에 관련된 모든 댓글을 출력하십시오.
+```python
+#post.html
+                <div class="col-lg-8 col-md-10 mx-auto comment">
+                    {% for comment in post.comments: %}
+                    <ul class="commentList">
+                        <li>
+                            <div class="commenterImage">
+                                <img src="https://pbs.twimg.com/profile_images/744849215675838464/IH0FNIXk.jpg"/>
+                            </div>
+                            <div class="commentText">
+                                {{comment.text|safe}}
+                                <span class="date sub-text">{{comment.comment_author.name}}</span>
+
+                            </div>
+                        </li>
+                    </ul>
+                    {% endfor %}
+                </div>
+```
+
+Gravatar 이미지는 인터넷상 어디에서든 댓글 작성자 이미지로서 쓰입니다.
+
+예를 들면, 아래 게시물의 댓글에서 보실 수 있습니다:
+
+
+블로그 웹사이트 곳곳에서 사용하는 Gravatar 이미지를 다음 웹사이트에서 바꿀 수 있습니다. http://en.gravatar.com/
+
+Flask 애플리케이션에 Gravatar 이미지를 구현하는 건 아주 간단합니다.
+
+7. 여기서 Gravatar 공식 문서를 보고 댓글 섹션에 Gravatar 이미지를 추가하십시오.
+```python
+#main.py
+from flask_gravatar import Gravatar
+
+gravatar = Gravatar(app, size=100, rating='g', default='retro', force_default=False, force_lower=False, use_ssl=False, base_url=None)
+```
+```python
+#post.html
+ <div class="commenterImage">
+     <img src="{{ comment.comment_author.email | gravatar }}"/>
+</div>
+```
 
 ## 참고 문서
 - https://flask-login.readthedocs.io/en/latest/#login-example
@@ -318,3 +466,5 @@ author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 - https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#basic-relationship-patterns
 - Blog Post Model Hierarchy
 - https://github.com/SadSack963/day-69_blog_with_users/blob/master/docs/Class_Diagram.png
+- Gravatar 문서(댓글 이미지)
+- http://en.gravatar.com/site/implement/images
