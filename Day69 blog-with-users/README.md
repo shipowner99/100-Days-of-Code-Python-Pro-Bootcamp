@@ -213,7 +213,108 @@ def delete_post(post_id):
 #...
 ```
 
+### 관계형 데이터베이스 만들기
+최초의 사용자가 관리자이며 블로그 소유자가 됩니다. 사용자가 생성한 게시물을 해당 사용자와 데이터베이스에서 연결되도록 합니다. 추후 다른 사용자가 블로그에 게시물을 생성할 수 있도록 초대하고 관리자 권한을 주어야 할 수도 있습니다.
+
+따라서  User 테이블과  BlogPost 테이블 간의 관계를 생성하고 연결해야 합니다. 관계로 연결해야 사용자가 생성한 블로그 게시물을 볼 수 있습니다. 혹은 특정 블로그 게시물의 작성자가 어느 사용자인지 확인할 수 있죠.
+
+단순히 Python 코드만 작성한다면, BlogPost 객체 목록이 들어있는 posts 라는 프로퍼티를 가진  User 객체를 생성한다고 생각하면 됩니다.
+
+예를 들면,
+
+```
+class User:
+    def __init__(self, name, email, password):
+         self.name = name
+         self.email = email
+         self.password = password
+         self.posts = []
+ 
+class BlogPost:
+    def __init__(self, title, subtitle, body):
+         self.title = title
+         self.subtitle = subtitle
+         self.body = body
+ 
+new_user = User(
+    name="Angela",
+    email="angela@email.com",
+    password=123456,
+    posts=[
+        BlogPost(
+            title="Life of Cactus",
+            subtitle="So Interesting",
+            body="blah blah"
+        )
+    ]        
+}
+```
+
+
+이를 통해 특정 사용자가 작성한 모든 게시물을 쉽게 찾을 수 있습니다. 그 반대의 경우는 어떻게 할까요? 특정 게시물 객체를 작성한 사용자는 어떻게 찾을까요? 이를 위해, 단순한 Python 데이터 구조가 아닌, 데이터베이스를 사용하는 것입니다.
+
+SQLite, MySQL 혹은 Postgresql 등의 관계형 데이터베이스에서는 ForeignKey 메서드와 relationship() 메서드를 사용해서 테이블 간 관계를 정의할 수 있습니다.
+
+예를 들어 사용자가 여러 개의 게시물 객체를 생성할 수 있는 상황에서, 사용자 테이블과 게시물 테이블 간에 일대다 관계를 생성하려면 SQLAlchemy 공식 문서를 참고하세요.
+
+
+과제 1: 부모에 해당하는 사용자와 자식에 해당하는 게시물 클래스 코드를 수정하여 두 테이블 간에 양방향 일대다 관계를 생성해 보세요. 사용자가 생성한 게시물과 게시물 객체의 사용자를 쉽게 찾을 수 있을 것입니다.
+
+```python
+from typing import List
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    posts:Mapped[List["BlogPost"]] = relationship(back_populates="author")
+
+
+class BlogPost(db.Model):
+    __tablename__ = "blog_posts"
+    id = db.Column(db.Integer, primary_key=True)
+    author = db.Column(db.String(250), nullable=False)
+    title = db.Column(db.String(250), unique=True, nullable=False)
+    subtitle = db.Column(db.String(250), nullable=False)
+    date = db.Column(db.String(250), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    img_url = db.Column(db.String(250), nullable=False)
+    author_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    author: Mapped["User"] = relationship(back_populates="posts")
+```
+
+스키마 수정 후 데이터베이스 재생성
+이 상황에 블로그를 재실행한다면 오류가 발생할 것입니다.
+
+OperationalError: (sqlite3.OperationalError) no such column: blog_posts.author_id
+
+main.py 파일의 새 코드가 시작 코드의 원본 데이터베이스 파일인 blog.db  에는 존재하지 않았던 새로운 열을 추가함으로써 데이터베이스를 수정하기 때문입니다.
+
+author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+이렇게 되면 보존할 가치가 있는 데이터가 사라지며, 기존 blog.db 파일을 완전히 삭제하고 db.create_all() 라인을 사용해 테이블을 처음부터 재생성하는 것이 가장 쉽습니다. 단, 이 방법은 데이터베이스를 완전히 정리하는 것이므로 사용자를 다시 등록하고 게시물도 다시 생성해야 합니다.
+
+블로그 웹사이트를 새로 고치면, index.html 페이지와 page.html 페이지에서 작성자 이름이 사라질 것입니다.
+
+과제 2: index.html 페이지와 post.html 페이지를 수정하여 적절한 위치에 작성자 이름이 출력해 보세요.
+```python
+#index.html
+<a href="#">{{post.author.name}}</a>
+#post.html
+<a href="#">{{post.author.name}}</a>
+#post.author 에서 post.author.name 으로 바뀜.
+```
+힌트: BlogPost 의 author 프로퍼티는 User 객체가 됩니다.
+
+
 
 
 ## 참고 문서
 - https://flask-login.readthedocs.io/en/latest/#login-example
+- sqlalchemy 일대다 문서 
+- https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#basic-relationship-patterns
+- Blog Post Model Hierarchy
+- https://github.com/SadSack963/day-69_blog_with_users/blob/master/docs/Class_Diagram.png
